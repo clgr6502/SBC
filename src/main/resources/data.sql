@@ -1,0 +1,1 @@
+INSERT INTO demo (name) VALUES ('sample text');
