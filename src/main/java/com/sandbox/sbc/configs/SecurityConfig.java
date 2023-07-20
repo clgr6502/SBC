@@ -54,8 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.csrf().disable()
-                // Non autentica questo specifico endpoint
-                .authorizeRequests().antMatchers("/authenticate").permitAll()
+                // Non autentica questi specifici endpoint
+                .authorizeRequests()
+                .antMatchers("/authenticate").permitAll() // dove eroga il token
+                .antMatchers("/actuator/health").permitAll() // healthcheck
                 // Tutti gli altri si
                 .anyRequest().authenticated().and()
                 // La sessione è stateless
