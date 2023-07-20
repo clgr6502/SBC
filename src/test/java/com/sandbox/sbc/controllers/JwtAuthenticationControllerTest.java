@@ -10,10 +10,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 
@@ -55,6 +59,32 @@ public class JwtAuthenticationControllerTest {
 
         Assertions.assertEquals(mockedResponse.getUsername(), response.getUsername());
         Assertions.assertEquals(mockedResponse.getToken(), response.getToken());
+    }
+
+    @Test
+    void createAuthenticationTokenShouldFailForDisabledUser() throws Exception {
+
+        JwtRequest request = new JwtRequest();
+        request.setUsername("mock");
+        request.setPassword("mock");
+
+        Mockito.doThrow(DisabledException.class).when(authenticationManager).authenticate(Mockito.any());
+
+        Assertions.assertThrows(DisabledException.class, () -> jwtAuthenticationController.createAuthenticationToken(request));
+
+    }
+
+    @Test
+    void createAuthenticationTokenShouldFailForBadCredentialException() throws Exception {
+
+        JwtRequest request = new JwtRequest();
+        request.setUsername("mock");
+        request.setPassword("mock");
+
+        Mockito.doThrow(BadCredentialsException.class).when(authenticationManager).authenticate(Mockito.any());
+
+        Assertions.assertThrows(BadCredentialsException.class, () -> jwtAuthenticationController.createAuthenticationToken(request));
+
     }
 
     private UserDetails getMockedUserDetail() {
