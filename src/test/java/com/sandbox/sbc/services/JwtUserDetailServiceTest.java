@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class JwtUserDetailServiceTest {
     @Test
     void loadUserByUsernameForNonExistentUser() {
 
-        Assertions.assertThrows(UsernameNotFoundException.class, () -> jwtUserDetailsService.loadUserByUsername("mock"));
+        Assertions.assertThrows(ResponseStatusException.class, () -> jwtUserDetailsService.loadUserByUsername("mock"));
 
     }
 
