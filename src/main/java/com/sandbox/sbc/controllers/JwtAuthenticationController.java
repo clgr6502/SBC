@@ -49,7 +49,7 @@ public class JwtAuthenticationController {
 
     private void authenticate(String username, String password) throws Exception {
 
-        // TODO da gestire con un exception handler
+        // TODO inserire in una classe di utility
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {

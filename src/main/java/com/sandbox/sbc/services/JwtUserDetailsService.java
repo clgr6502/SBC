@@ -28,7 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             return new User("admin", "$2a$12$sZUSIhyVLN7MByX.CzRVf.70b/985QVkGzOJHrF8xavhZpLqd9MfW",
                     new ArrayList<>());
         } else {
-            logger.error("Utente non trovato");
+            logger.error("Utente {} non trovato", username);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente " + username + " non trovato");
         }
     }
