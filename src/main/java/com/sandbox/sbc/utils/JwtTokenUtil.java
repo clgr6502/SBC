@@ -62,4 +62,11 @@ public class JwtTokenUtil implements Serializable {
                 .setExpiration(new Date(System.currentTimeMillis() + TEMPORARY_JWT * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
+
+    // Metodo di validazione del token
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
 }
