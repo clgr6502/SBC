@@ -15,10 +15,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @CrossOrigin
+@Validated
 public class JwtAuthenticationController {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationController.class);
@@ -49,7 +53,7 @@ public class JwtAuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> saveUser(@RequestBody DbUserRequest request) {
+    public ResponseEntity<Void> saveUser(@Valid @RequestBody DbUserRequest request) {
 
 
         logger.info("Invocazione del servizio di salvataggio utente");
