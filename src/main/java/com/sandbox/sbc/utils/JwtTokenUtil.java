@@ -1,8 +1,13 @@
 package com.sandbox.sbc.utils;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -16,6 +21,8 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
+
     // JWT temporaneo della durata di 15 minuti
     public static final long TEMPORARY_JWT = 900;
 
@@ -23,23 +30,29 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.secret}")
     private String secret;
 
-    // Metodo che restituisce i claims dal token
-    public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+    // Metodo che decodifica il token
+    public DecodedJWT decodeJwt(String token) {
 
-        final Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-        return claimsResolver.apply(claims);
+        try {
+            return JWT.decode(token);
+        } catch (JWTDecodeException e) {
+            logger.error("Errore nella decodifica del token");
+            throw new JWTDecodeException("Errore nella decodifica del token");
+        }
     }
 
     // Restituisce l'username dal token
     public String getUsernameFromToken(String token) {
 
-        return getClaim(token, Claims::getSubject);
+        DecodedJWT jwt = decodeJwt(token);
+        return jwt.getSubject();
     }
 
     // Restituisce la data di scadenza dal token
     public Date getExpirationDateFromToken(String token) {
 
-        return getClaim(token, Claims::getExpiration);
+        DecodedJWT jwt = decodeJwt(token);
+        return jwt.getExpiresAt();
     }
 
     // Controlla se è scaduto il token
@@ -65,6 +78,8 @@ public class JwtTokenUtil implements Serializable {
 
     // Metodo di validazione del token
     public Boolean validateToken(String token, UserDetails userDetails) {
+
+        logger.info("Validazione Jwt");
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
