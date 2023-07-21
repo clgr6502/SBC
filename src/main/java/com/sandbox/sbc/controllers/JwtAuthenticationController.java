@@ -1,5 +1,6 @@
 package com.sandbox.sbc.controllers;
 
+import com.sandbox.sbc.requests.DbUserRequest;
 import com.sandbox.sbc.requests.JwtRequest;
 import com.sandbox.sbc.responses.JwtResponse;
 import com.sandbox.sbc.services.JwtUserDetailsService;
@@ -45,6 +46,16 @@ public class JwtAuthenticationController {
         response.setToken(token);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> saveUser(@RequestBody DbUserRequest request) {
+
+
+        logger.info("Invocazione del servizio di salvataggio utente");
+        userDetailsService.saveUser(request);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     private void authenticate(String username, String password) throws Exception {
