@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
@@ -58,12 +58,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll() // dove eroga il token
                 .antMatchers("/actuator/health").permitAll() // healthcheck
-                // Tutti gli altri si
+                .antMatchers("/register").permitAll() // signup page
+                .antMatchers("/h2-console/**").permitAll() // per la console di H2
                 .anyRequest().authenticated().and()
                 // La sessione è stateless
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        //per la Whitelable page
+        httpSecurity.headers().frameOptions().sameOrigin();
         // Aggiungo il filtro per validare il token
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
