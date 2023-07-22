@@ -60,6 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/actuator/health").permitAll() // healthcheck
                 .antMatchers("/register").permitAll() // signup page
                 .antMatchers("/h2-console/**").permitAll() // per la console di H2
+                // Questo endpoint vale solo per l'admin
+                .antMatchers("/simple/flag/**")
+                .hasAuthority("admin")
                 .anyRequest().authenticated().and()
                 // La sessione è stateless
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
