@@ -1,13 +1,11 @@
 package com.sandbox.sbc.services;
 
 import com.sandbox.sbc.entities.DbUser;
-import com.sandbox.sbc.mappers.UserMapper;
 import com.sandbox.sbc.repositories.DbUserRepository;
 import com.sandbox.sbc.requests.DbUserRequest;
 import com.sandbox.sbc.utils.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

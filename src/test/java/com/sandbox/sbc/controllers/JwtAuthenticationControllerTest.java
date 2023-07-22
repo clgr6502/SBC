@@ -1,6 +1,5 @@
 package com.sandbox.sbc.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sandbox.sbc.requests.DbUserRequest;
 import com.sandbox.sbc.requests.JwtRequest;
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collection;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
