@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,7 +38,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         if ("admin".equals(username)) {
             return new User("admin", "$2a$12$sZUSIhyVLN7MByX.CzRVf.70b/985QVkGzOJHrF8xavhZpLqd9MfW",
-                    new ArrayList<>());
+                    List.of((GrantedAuthority) () -> "admin"));
         } else {
 
             Optional<DbUser> user = dbUserRepository.findByUsername(username);
@@ -46,7 +48,7 @@ public class JwtUserDetailsService implements UserDetailsService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente " + username + " non trovato");
             }else {
                 return new User(user.get().getUsername(), user.get().getPassword(),
-                        new ArrayList<>());
+                        List.of((GrantedAuthority) () -> "user"));
             }
         }
     }
@@ -54,6 +56,8 @@ public class JwtUserDetailsService implements UserDetailsService {
     public void saveUser(DbUserRequest request) {
 
         DbUser user = UserMapper.dbUserRequestToEntity(request, encoder);
+        user.setFlag(false);
+
         dbUserRepository.save(user);
 
         logger.info("Utente {} salvato", user.getUsername());
