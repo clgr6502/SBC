@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface DbUserRepository extends JpaRepository<DbUser, Long> {
 
     Optional<DbUser> findByUsername(String username);
+
+    Optional<DbUser> findById(Long id);
 }
