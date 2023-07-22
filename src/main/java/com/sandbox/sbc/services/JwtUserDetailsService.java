@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +45,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             if(user.isEmpty()) {
                 logger.error("Utente {} non trovato", username);
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente " + username + " non trovato");
-            }else {
+            } else {
                 return new User(user.get().getUsername(), user.get().getPassword(),
                         List.of((GrantedAuthority) () -> "user"));
             }
@@ -54,6 +53,16 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public void saveUser(DbUserRequest request) {
+
+        if(request.getUsername().equals("admin")) {
+
+            logger.error("Utilizzato un nome non consentito");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        } else if (dbUserRepository.findByUsername(request.getUsername()).isPresent()) {
+
+            logger.error("Nome utente già utilizzato");
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
 
         DbUser user = UserMapper.dbUserRequestToEntity(request, encoder);
         user.setFlag(false);
