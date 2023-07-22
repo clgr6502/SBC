@@ -55,16 +55,14 @@ public class JwtAuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<Void> saveUser(@Valid @RequestBody DbUserRequest request) {
 
-
         logger.info("Invocazione del servizio di salvataggio utente");
         userDetailsService.saveUser(request);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     private void authenticate(String username, String password) throws Exception {
 
-        // TODO inserire in una classe di utility
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
