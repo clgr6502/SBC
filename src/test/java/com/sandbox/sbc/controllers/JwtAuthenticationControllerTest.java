@@ -130,6 +130,51 @@ public class JwtAuthenticationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void saveUserShouldFailForNullPassword() throws Exception {
+
+        DbUserRequest request = getMockedDbUserRequest();
+        request.setPassword(null);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String req = mapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(req))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveUserShouldFailForEmptyUser() throws Exception {
+
+        DbUserRequest request = getMockedDbUserRequest();
+        request.setUsername("");
+
+        ObjectMapper mapper = new ObjectMapper();
+        String req = mapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(req))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveUserShouldFailForEmptyPassword() throws Exception {
+
+        DbUserRequest request = getMockedDbUserRequest();
+        request.setPassword("");
+
+        ObjectMapper mapper = new ObjectMapper();
+        String req = mapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(req))
+                .andExpect(status().isBadRequest());
+    }
+
     private DbUserRequest getMockedDbUserRequest(){
 
         DbUserRequest request = new DbUserRequest();
