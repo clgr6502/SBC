@@ -5,11 +5,11 @@ import javax.validation.constraints.NotNull;
 
 public class DbUserRequest {
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Il nome utente è obbligatorio")
+    @NotBlank(message = "Il nome utente è obbligatorio")
     private String username;
-    @NotNull
-    @NotBlank
+    @NotNull(message = "La password è obbligatoria")
+    @NotBlank(message = "La password è obbligatoria")
     private String password;
 
     public String getUsername() {
