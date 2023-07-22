@@ -20,6 +20,8 @@ public class DbUser {
     @NotBlank
     private String password;
 
+    private Boolean flag;
+
     public Long getId() {
         return id;
     }
@@ -42,5 +44,13 @@ public class DbUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
     }
 }
