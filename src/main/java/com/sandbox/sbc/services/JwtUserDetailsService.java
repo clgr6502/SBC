@@ -55,5 +55,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         DbUser user = UserMapper.dbUserRequestToEntity(request, encoder);
         dbUserRepository.save(user);
+
+        logger.info("Utente {} salvato", user.getUsername());
     }
 }

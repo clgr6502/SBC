@@ -1,10 +1,13 @@
 package com.sandbox.sbc.services;
 
 import com.sandbox.sbc.entities.DbUser;
+import com.sandbox.sbc.mappers.UserMapper;
 import com.sandbox.sbc.repositories.DbUserRepository;
+import com.sandbox.sbc.requests.DbUserRequest;
 import com.sandbox.sbc.utils.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,6 +63,15 @@ public class JwtUserDetailServiceTest {
 
     }
 
+    @Test
+    void saveUserShouldBeSuccessful() {
+
+        DbUserRequest request = getMockedDbRequest();
+        Mockito.when(dbUserRepository.save(Mockito.any())).thenReturn(getMockedDbUser());
+
+        jwtUserDetailsService.saveUser(request);
+    }
+
     private User getAdmin() {
         return new User("admin", "$2a$12$sZUSIhyVLN7MByX.CzRVf.70b/985QVkGzOJHrF8xavhZpLqd9MfW", new ArrayList<>());
     }
@@ -68,9 +80,19 @@ public class JwtUserDetailServiceTest {
 
         DbUser user = new DbUser();
 
+        user.setId(1L);
         user.setUsername("mock");
         user.setPassword("mockPass");
 
         return user;
+    }
+
+    private DbUserRequest getMockedDbRequest() {
+
+        DbUserRequest request = new DbUserRequest();
+
+        request.setUsername("mock");
+        request.setPassword("mockPass");
+        return request;
     }
 }
