@@ -111,6 +111,7 @@ public class JwtUserDetailServiceTest {
         user.setId(1L);
         user.setUsername("mock");
         user.setPassword("mockPass");
+        user.setFlag(false);
 
         return user;
     }
