@@ -10,11 +10,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -57,7 +59,10 @@ public class JwtUserDetailServiceTest {
 
         Mockito.when(dbUserRepository.findByUsername(Mockito.any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResponseStatusException.class, () -> jwtUserDetailsService.loadUserByUsername("mock"));
+        ResponseStatusException caught = Assertions.assertThrows(ResponseStatusException.class,
+                () -> jwtUserDetailsService.loadUserByUsername("mock"));
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, caught.getStatus());
 
     }
 
@@ -70,8 +75,33 @@ public class JwtUserDetailServiceTest {
         jwtUserDetailsService.saveUser(request);
     }
 
+    @Test
+    void saveUserShouldFailForForbiddenName() {
+
+        DbUserRequest req = getMockedDbRequest();
+        req.setUsername("admin");
+
+        ResponseStatusException caught = Assertions.assertThrows(ResponseStatusException.class,
+                () -> jwtUserDetailsService.saveUser(req));
+
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, caught.getStatus());
+    }
+
+    @Test
+    void saveUserShouldFailForAlreadyExistingName() {
+
+        DbUserRequest req = getMockedDbRequest();
+
+        Mockito.when(dbUserRepository.findByUsername(Mockito.any())).thenReturn(Optional.of(getMockedDbUser()));
+
+        ResponseStatusException caught = Assertions.assertThrows(ResponseStatusException.class,
+                () -> jwtUserDetailsService.saveUser(req));
+
+        Assertions.assertEquals(HttpStatus.CONFLICT, caught.getStatus());
+    }
+
     private User getAdmin() {
-        return new User("admin", "$2a$12$sZUSIhyVLN7MByX.CzRVf.70b/985QVkGzOJHrF8xavhZpLqd9MfW", new ArrayList<>());
+        return new User("admin", "$2a$12$sZUSIhyVLN7MByX.CzRVf.70b/985QVkGzOJHrF8xavhZpLqd9MfW", List.of((GrantedAuthority) () -> "admin"));
     }
 
     private DbUser getMockedDbUser() {
